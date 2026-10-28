@@ -1,14 +1,25 @@
 # Homework 24 — QAuto registration form tests
 
-Playwright + TypeScript tests for the Sign up modal on https://qauto.forstudy.space/.
+Playwright + TypeScript tests for the QAuto Sign up modal.
 
 ```bash
 npm install
 npx playwright install chromium   # first time only
-npx playwright test
+cp .env.example .env              # then fill in BASE_URL, HTTP_USERNAME, HTTP_PASSWORD
+npm test
 ```
 
-Basic Auth credentials and `baseURL` are set in `playwright.config.ts`.
+`baseURL` and the Basic Auth credentials are read from `.env` (git-ignored) by `config/env.ts`.
+If a variable is missing, the run stops with `Missing env variable: <NAME>`.
+
+| Script | Command |
+|---|---|
+| `npm test` | `npx playwright test` |
+| `npm run test:headed` | `npx playwright test --headed` |
+| `npm run test:ui` | `npx playwright test --ui` |
+| `npm run test:chromium` | `npx playwright test --project=chromium` |
+| `npm run test:debug` | `npx playwright test --debug` |
+| `npm run report` | `npx playwright show-report` |
 Users created by the tests have emails like `aqa-<timestamp>-<random>@test.com`.
 
 ## Known bugs (marked with `test.fail()`)
