@@ -1,4 +1,5 @@
 import { defineConfig, devices } from '@playwright/test';
+import { config } from './config/env';
 
 /**
  * See https://playwright.dev/docs/test-configuration.
@@ -14,12 +15,10 @@ export default defineConfig({
   retries: process.env.CI ? 2 : 0,
   reporter: [['list'], ['html', { open: 'never' }]],
   use: {
-    baseURL: 'https://qauto.forstudy.space',
+    /* Values come from .env, see config/env.ts */
+    baseURL: config.baseURL,
     /* The site is behind HTTP Basic Auth */
-    httpCredentials: {
-      username: 'guest',
-      password: 'welcome2qauto',
-    },
+    httpCredentials: config.httpCredentials,
     trace: 'retain-on-failure',
     screenshot: 'only-on-failure',
   },
