@@ -20,6 +20,18 @@ If a variable is missing, the run stops with `Missing env variable: <NAME>`.
 | `npm run test:chromium` | `npx playwright test --project=chromium` |
 | `npm run test:debug` | `npx playwright test --debug` |
 | `npm run report` | `npx playwright show-report` |
+## Structure (Page Object Model, Homework 25)
+| Path | Contents |
+|---|---|
+| `pages/BasePage.ts` | Holds `page`, `open(path = '/')` |
+| `pages/HomePage.ts` | Sign up button, `openSignUpForm()` returns a `RegistrationForm` |
+| `pages/RegistrationForm.ts` | Sign up modal: field locators, `fill*()`, `fillForm(user)`, `errorFor(field)`, `clickRegister()` |
+| `pages/GaragePage.ts` | `/panel/garage` heading and the logged-in-only "My profile" button |
+| `test-data/users.ts` | `validUser(overrides)` with an `aqa-` email |
+| `test-data/registration.ts` | Error texts, boundary and negative cases |
+| `fixtures/pages.ts` | `test.extend` with `homePage`, `registrationForm` (modal already open), `garagePage` |
+| `tests/registration.spec.ts` | Scenarios and assertions only, no selectors |
+
 Users created by the tests have emails like `aqa-<timestamp>-<random>@test.com`.
 
 ## Known bugs (marked with `test.fail()`)
