@@ -5,7 +5,7 @@ Playwright + TypeScript tests for the QAuto Sign up modal.
 ```bash
 npm install
 npx playwright install chromium   # first time only
-cp .env.example .env              # then fill in BASE_URL, HTTP_USERNAME, HTTP_PASSWORD
+cp .env.example .env              # then fill in BASE_URL, HTTP_USERNAME, HTTP_PASSWORD, USER_EMAIL, USER_PASSWORD
 npm test
 ```
 
@@ -31,6 +31,16 @@ If a variable is missing, the run stops with `Missing env variable: <NAME>`.
 | `test-data/registration.ts` | Error texts, boundary and negative cases |
 | `fixtures/pages.ts` | `test.extend` with `homePage`, `registrationForm` (modal already open), `garagePage` |
 | `tests/registration.spec.ts` | Scenarios and assertions only, no selectors |
+| `config/constants.ts` | `STORAGE_STATE_PATH`, `GARAGE_PATH` |
+| `pages/SignInForm.ts`, `pages/AddCarForm.ts` | Log in modal, Add a car modal |
+| `tests/setup/auth.setup.ts` | `setup` project: logs in as `USER_EMAIL` and saves `playwright/.auth/user.json` |
+| `fixtures/userGaragePage.fixture.ts` | `userGaragePage`: new context with the saved session, Garage page already open |
+| `tests/garage/userGaragePage.spec.ts` | Garage tests with no login steps |
+
+## Storage state (Homework 26)
+`USER_EMAIL` / `USER_PASSWORD` must belong to an already registered QAuto user.
+`npx playwright test` runs the `setup` project first (`chromium` lists it in `dependencies`),
+then the tests. The saved session in `playwright/.auth/` is git-ignored.
 
 Users created by the tests have emails like `aqa-<timestamp>-<random>@test.com`.
 

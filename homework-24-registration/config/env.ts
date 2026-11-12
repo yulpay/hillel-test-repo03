@@ -21,3 +21,14 @@ export const config: {
     password: requireEnv('HTTP_PASSWORD'),
   },
 };
+
+/**
+ * An already registered user for the login setup.
+ * Read lazily, so tests that don't need it (registration) still run without these variables.
+ */
+export function testUser(): { email: string; password: string } {
+  return {
+    email: requireEnv('USER_EMAIL'),
+    password: requireEnv('USER_PASSWORD'),
+  };
+}

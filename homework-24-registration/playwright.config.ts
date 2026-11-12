@@ -24,9 +24,16 @@ export default defineConfig({
   },
   /* One browser only: the positive test creates a real user on every run */
   projects: [
+    /* Logs in once as USER_EMAIL and saves the session to STORAGE_STATE_PATH (config/constants.ts) */
+    {
+      name: 'setup',
+      testMatch: /.*\.setup\.ts/,
+      use: { ...devices['Desktop Chrome'] },
+    },
     {
       name: 'chromium',
       use: { ...devices['Desktop Chrome'] },
+      dependencies: ['setup'],
     },
   ],
 });
