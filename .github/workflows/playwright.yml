@@ -13,8 +13,14 @@ jobs:
     timeout-minutes: 60
     runs-on: ubuntu-latest
     env:
-      # Pull requests run Chromium only for fast feedback; other events run all projects
-      PW_PROJECT_ARGS: ${{ github.event_name == 'pull_request' && '--project=chromium' || '' }}
+      # Pull requests run Chromium + API tests only for fast feedback; other events run all projects
+      PW_PROJECT_ARGS: ${{ github.event_name == 'pull_request' && '--project=chromium --project=api' || '' }}
+      # .env is git-ignored, so CI reads the same variables from repository secrets
+      # (Settings → Secrets and variables → Actions)
+      HTTP_USERNAME: ${{ secrets.HTTP_USERNAME }}
+      HTTP_PASSWORD: ${{ secrets.HTTP_PASSWORD }}
+      USER_EMAIL: ${{ secrets.USER_EMAIL }}
+      USER_PASSWORD: ${{ secrets.USER_PASSWORD }}
     steps:
     - uses: actions/checkout@v4
     - uses: actions/setup-node@v4
