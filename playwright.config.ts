@@ -1,12 +1,10 @@
 import { defineConfig, devices } from '@playwright/test';
-import dotenv from 'dotenv';
-import path from 'path';
+/* Loads .env (dotenv) and exposes the URL, Basic Auth and test-user settings */
+import { BASE_URL, HTTP_CREDENTIALS, STORAGE_STATE_PATH } from './utils/env';
 
-/**
- * Read environment variables from file.
- * https://github.com/motdotla/dotenv
- */
-dotenv.config({ path: path.resolve(__dirname, '.env'), quiet: true });
+/* Browser projects log in once via the `setup` project and reuse its session */
+const loggedIn = { storageState: STORAGE_STATE_PATH };
+const browserProject = { dependencies: ['setup'], testIgnore: ['**/api/**', '**/*.setup.ts'] };
 
 /**
  * See https://playwright.dev/docs/test-configuration.
@@ -40,7 +38,10 @@ export default defineConfig({
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
     /* Base URL to use in actions like `await page.goto('/')`. Override with BASE_URL in .env */
-    baseURL: process.env.BASE_URL ?? 'https://playwright.dev',
+    baseURL: BASE_URL,
+
+    /* The site is behind HTTP Basic Auth (HTTP_USERNAME / HTTP_PASSWORD in .env) */
+    httpCredentials: HTTP_CREDENTIALS,
 
     /* Keep debugging artifacts only for failed tests. See https://playwright.dev/docs/trace-viewer */
     trace: 'retain-on-failure',
@@ -61,37 +62,46 @@ export default defineConfig({
 
   /* Configure projects for major browsers */
   projects: [
-    /* Logs in once and saves the session for the other projects.
-     * Enable together with `dependencies: ['setup']` and
-     * `storageState: 'playwright/.auth/user.json'` in the projects below. */
-    // {
-    //   name: 'setup',
-    //   testMatch: /.*\.setup\.ts/,
-    // },
+    /* Logs in once and saves the session for the browser projects below */
+    {
+      name: 'setup',
+      testMatch: /.*\.setup\.ts/,
+    },
+
+    /* API tests (tests/api) use APIRequestContext only, so they run once, without a browser */
+    {
+      name: 'api',
+      testDir: './tests/api',
+    },
 
     {
       name: 'chromium',
-      use: { ...devices['Desktop Chrome'] },
+      ...browserProject,
+      use: { ...devices['Desktop Chrome'], ...loggedIn },
     },
 
     {
       name: 'firefox',
-      use: { ...devices['Desktop Firefox'] },
+      ...browserProject,
+      use: { ...devices['Desktop Firefox'], ...loggedIn },
     },
 
     {
       name: 'webkit',
-      use: { ...devices['Desktop Safari'] },
+      ...browserProject,
+      use: { ...devices['Desktop Safari'], ...loggedIn },
     },
 
     /* Test against mobile viewports. */
     {
       name: 'mobile-chrome',
-      use: { ...devices['Pixel 7'] },
+      ...browserProject,
+      use: { ...devices['Pixel 7'], ...loggedIn },
     },
     {
       name: 'mobile-safari',
-      use: { ...devices['iPhone 15'] },
+      ...browserProject,
+      use: { ...devices['iPhone 15'], ...loggedIn },
     },
 
     /* Test against branded browsers. */
